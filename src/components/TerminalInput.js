@@ -17,8 +17,11 @@ const TerminalInput = ({ handleInput }) => {
     inputTerminal.current.focus();
   });
   const handleTyping = (e) => {
-    setWidth(e.target.value.length);
-    setTerminalInput(e.target.value);
+    let tempVal = e.target.value;
+    let maxLen = 80; // max # of characters on input
+    tempVal = tempVal.length > maxLen ? tempVal.substring(0, maxLen) : tempVal;
+    setWidth(tempVal.length);
+    setTerminalInput(tempVal);
   };
   const refocus = () => {
     inputTerminal.current.focus();
