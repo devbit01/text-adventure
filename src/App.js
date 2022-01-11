@@ -1,13 +1,19 @@
+import { useState } from "react";
+import TerminalInput from "./components/TerminalInput";
+import TerminalOutput from "./components/TerminalOutput";
 function App() {
+  const [output, setOutput] = useState([]);
+
+  const handleInput = (input) => {
+    setOutput([...output, input]);
+  };
   return (
     <div>
-      <div id="crt">
-        <p>
-          Lorem ipsum dolor sit, amet consectetur adipisicing elit. Molestiae,
-          quos? Hic dolorum ipsam expedita debitis, reiciendis alias, impedit
-          quia, explicabo repudiandae sunt consequatur placeat modi est eligendi
-          cum! Beatae, iure!
-        </p>
+      <div id="monitor">
+        <div id="screen">
+          <TerminalOutput output={output} />
+          <TerminalInput handleInput={handleInput} />
+        </div>
       </div>
     </div>
   );
