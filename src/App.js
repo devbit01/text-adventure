@@ -5,7 +5,11 @@ function App() {
   const [output, setOutput] = useState([]);
 
   const handleInput = (input) => {
-    setOutput([...output, input]);
+    if (input.toUpperCase() === "CLEAR") {
+      setOutput([]);
+    } else {
+      setOutput([...output, input]);
+    }
   };
   return (
     <div>

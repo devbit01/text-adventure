@@ -1,22 +1,27 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 const TerminalInput = ({ handleInput }) => {
   const [terminalInput, setTerminalInput] = useState("");
   const [width, setWidth] = useState(0);
+  const inputTerminal = useRef(null);
+
   const handleKeyDown = (e) => {
-    console.log("typing", e.target.innerHTML);
     if (e.key === "Enter") {
-      console.log("ENTER!");
       handleInput(terminalInput);
-      // submit input
       setWidth(0);
       setTerminalInput("");
     }
   };
+
+  useEffect(() => {
+    inputTerminal.current.focus();
+  });
   const handleTyping = (e) => {
-    console.log("working?");
     setWidth(e.target.value.length);
     setTerminalInput(e.target.value);
+  };
+  const refocus = () => {
+    inputTerminal.current.focus();
   };
   return (
     <div className="flex-container">
@@ -32,7 +37,9 @@ const TerminalInput = ({ handleInput }) => {
         value={terminalInput}
         autoComplete="off"
         contentEditable="true"
+        ref={inputTerminal}
         style={{ width: width + "ch" }}
+        onBlur={refocus}
       ></input>
       <div className="cursor"></div>
     </div>
