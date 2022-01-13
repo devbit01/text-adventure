@@ -1,24 +1,36 @@
 import React, { useState, useRef, useEffect } from "react";
 
-const TerminalInput = ({ handleInput }) => {
+const TerminalInput = ({ handleInput, commandHistory, maxChars, prompt }) => {
   const [terminalInput, setTerminalInput] = useState("");
   const [width, setWidth] = useState(0);
   const inputTerminal = useRef(null);
 
   const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
-      handleInput(terminalInput);
-      setWidth(0);
-      setTerminalInput("");
+    switch (e.key) {
+      case "Enter":
+        handleInput(terminalInput);
+        setWidth(0);
+        setTerminalInput("");
+
+        break;
+      case "ArrowUp":
+        // future feature
+        break;
+      case "ArrowDown":
+        // future feature
+        break;
+      default:
+      /* do nothing */
     }
   };
 
   useEffect(() => {
     inputTerminal.current.focus();
   });
+
   const handleTyping = (e) => {
     let tempVal = e.target.value;
-    let maxLen = 80; // max # of characters on input
+    let maxLen = maxChars; // max # of characters on input
     tempVal = tempVal.length > maxLen ? tempVal.substring(0, maxLen) : tempVal;
     setWidth(tempVal.length);
     setTerminalInput(tempVal);
@@ -28,7 +40,7 @@ const TerminalInput = ({ handleInput }) => {
   };
   return (
     <div className="flex-container">
-      <div className="prompt">&#62;</div>
+      <div className="prompt">{prompt}</div>
       <input
         autoFocus
         type="text"
