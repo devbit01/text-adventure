@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useGlobalContext } from "../context";
 
-const TerminalInput = ({ handleInput, commandHistory, maxChars, prompt }) => {
+const TerminalInput = ({ commandHistory, maxChars, prompt }) => {
+  const { handleInput } = useGlobalContext();
   const [terminalInput, setTerminalInput] = useState("");
   const [width, setWidth] = useState(0);
   const inputTerminal = useRef(null);

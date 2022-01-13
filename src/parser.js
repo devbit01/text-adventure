@@ -11,9 +11,7 @@ const synonyms = [
   { TYPE: "NOUN", words: ["LAMP", "LIGHT", "LANTERN"] },
 ];
 const rooms = [{ name: "room1" }];
-
 const objects = [{ name: "object1" }];
-
 const routines = [{ name: "V-HELLO", action: "SAY" }];
 
 const findWord = (wordToFind) => {

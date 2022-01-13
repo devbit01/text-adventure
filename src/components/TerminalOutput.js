@@ -1,9 +1,11 @@
 import React from "react";
+import { useGlobalContext } from "../context";
 
 const TerminalOutput = ({ output }) => {
+  const { outputHistory } = useGlobalContext();
   return (
     <div className="output-container">
-      {output.map((line, index) => {
+      {outputHistory.map((line, index) => {
         return (
           <div key={index} className="output">
             {line}
