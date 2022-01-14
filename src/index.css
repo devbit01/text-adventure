@@ -74,7 +74,7 @@ body,
   cursor: "text";
 }
 .output {
-  min-height: 2.5rem;
+  min-height: 1.5rem;
   overflow-wrap: break-word;
 }
 .flex-container {

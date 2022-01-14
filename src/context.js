@@ -1,12 +1,16 @@
 import React, { useState, useContext, useReducer, useEffect } from "react";
 import { reducer } from "./reducer";
-import parser from "./parser";
+
+import { syntax, synonyms, stopWords } from "./data";
 
 const AppContext = React.createContext();
 const prompt = ">";
 const defaultState = {
   outputHistory: [],
   commands: [],
+  syntax: syntax,
+  synonyms: synonyms,
+  stopWords: stopWords,
 };
 
 const AppProvider = ({ children }) => {
@@ -20,8 +24,14 @@ const AppProvider = ({ children }) => {
     }
   };
 
-  // main process loop
-  const process = (pAction, pObject, pIObject) => {
+  /**
+   * Returns true if all actions were succesful.
+   *
+   * @param {string} pAction
+   * @param {string} pObject
+   * @param {string} pIObject
+   */
+  const performAction = (pAction, pObject, pIObject) => {
     /* 
     order of operations: 
     - check pIObject for ActionRoutine
@@ -36,18 +46,7 @@ const AppProvider = ({ children }) => {
   };
 
   const handleInput = (input) => {
-    setCommandHistory([...commandHistory, input]);
-    tell(prompt + input.toUpperCase());
-
-    const { success, message, pAction, pObject, pIndirectObject } = parser(
-      input.toUpperCase()
-    );
-
-    if (success) {
-      process(pAction, pObject, pIndirectObject);
-    } else {
-      tell(message, true);
-    }
+    setCommandHistory([...commandHistory, input.toUpperCase()]);
   };
 
   useEffect(() => {
@@ -57,7 +56,9 @@ const AppProvider = ({ children }) => {
   }, []);
 
   return (
-    <AppContext.Provider value={{ ...state, handleInput }}>
+    <AppContext.Provider
+      value={{ ...state, handleInput, tell, commandHistory, performAction }}
+    >
       {children}
     </AppContext.Provider>
   );
