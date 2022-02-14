@@ -51,9 +51,14 @@ body,
   font: 2.5rem Inconsolata, monospace;
   font-family: "Share Tech Mono", monospace;
   text-shadow: 0 0 5px #c8c8c8;
-  text-transform: uppercase;
+
   color: white;
   animation: type 0.5s linear 0s 1;
+}
+
+.terminal,
+.cursor {
+  text-transform: uppercase;
 }
 
 .terminal,
@@ -124,7 +129,7 @@ body,
     0deg,
     rgba(0, 0, 0, 0) 0%,
     rgba(255, 255, 255, 0.2) 10%,
-    rgba(0, 0, 0, 0.1) 100%
+    rgba(0, 0, 0, 0.1) 50%
   );
   opacity: 0.1;
   position: absolute;
@@ -133,7 +138,7 @@ body,
   animation: scanline 10s linear infinite;
 }
 
-*/ a {
+* a {
   color: #0bc;
   text-decoration: none;
 }

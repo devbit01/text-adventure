@@ -1,63 +1,80 @@
 import React, { useState, useContext, useReducer, useEffect } from "react";
 import { reducer } from "./reducer";
-
-import { syntax, synonyms, stopWords } from "./data";
+import { synonyms, stopWords, synonmys_map } from "./data";
+import { zorkGameData, rooms } from "./games/zorkGameData";
 
 const AppContext = React.createContext();
-const prompt = ">";
+
 const defaultState = {
-  outputHistory: [],
   commands: [],
-  syntax: syntax,
+  rooms: rooms,
   synonyms: synonyms,
   stopWords: stopWords,
+  here: "NORTH",
 };
 
 const AppProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, defaultState);
+  const [gameState, setGameState] = useState(defaultState);
+  const [synonymLookup, setSynonymLookup] = useState(new Map());
   const [commandHistory, setCommandHistory] = useState([]);
+  const [outputHistory, setOutputHistory] = useState([]);
 
   const tell = (message, newLine = false) => {
-    dispatch({ type: "ADD_OUTPUT", payload: message });
+    setOutputHistory((previousState) => {
+      return [...previousState, message];
+    });
     if (newLine) {
-      dispatch({ type: "ADD_OUTPUT", payload: "" });
+      setOutputHistory((previousState) => {
+        return [...previousState, ""];
+      });
     }
   };
 
-  /**
-   * Returns true if all actions were succesful.
-   *
-   * @param {string} pAction
-   * @param {string} pObject
-   * @param {string} pIObject
-   */
-  const performAction = (pAction, pObject, pIObject) => {
-    /* 
-    order of operations: 
-    - check pIObject for ActionRoutine
-    - check pObject for ActionRoutine
-    - check pAction for ActionRoutine
-    - run end of room routine (if exists)
-    - run "clocker"
-      - clocker counts down all queued events and runs them if it is their time
-    */
-    tell(`Action: ${pAction}`, true);
-    dispatch({ type: pAction });
+  const handleClearOutput = () => {
+    setOutputHistory([]);
+    return true;
   };
 
   const handleInput = (input) => {
-    setCommandHistory([...commandHistory, input.toUpperCase()]);
+    console.log("at index:", "AT".indexOf(" "));
+
+    input = input.toUpperCase();
+    tell(">" + input);
+    setCommandHistory([...commandHistory, input]);
+    const punctuations = [".", ",", "!", "?"];
+
+    // remove punctuations and remove "stop" words
+    const cleanedInput = cleanInput(input, punctuations);
+
+    for (let word of cleanedInput.split(" ")) {
+      if (!synonymLookup.has(word)) {
+        tell(`I don't know the word "${word}".`, true);
+        return false;
+      }
+
+      const lookup = synonymLookup.get(word);
+      tell(`type: ${lookup.type}, keyword: ${lookup.keyWord}`, true);
+
+      if (lookup.keyWord === "CLEAR") {
+        handleClearOutput();
+      }
+    }
   };
 
   useEffect(() => {
     // initial load only
-    console.log("loading....");
-    dispatch({ type: "LOAD_COMMANDS", payload: ["CLEAR", "HELP"] });
+    console.log("loading game data....");
+    console.log("loading synonyms");
+    setSynonymLookup(synonmys_map());
   }, []);
 
   return (
     <AppContext.Provider
-      value={{ ...state, handleInput, tell, commandHistory, performAction }}
+      value={{
+        handleInput,
+        outputHistory,
+      }}
     >
       {children}
     </AppContext.Provider>
@@ -69,3 +86,13 @@ export const useGlobalContext = () => {
 };
 
 export { AppContext, AppProvider };
+
+function cleanInput(input, punctuations) {
+  return input
+    .split("")
+    .filter((char) => !punctuations.includes(char))
+    .join("")
+    .split(" ")
+    .filter((word) => !stopWords.includes(word))
+    .join(" ");
+}

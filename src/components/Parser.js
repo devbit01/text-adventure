@@ -13,7 +13,8 @@ const removeStopWords = (words, stopWords) => {
 
 const findWord = (wordToFind, synonyms) => {
   for (var i = 0; i < synonyms.length; i++) {
-    let words = synonyms[i].words;
+    let words = synonyms[i].words.split(" ");
+
     for (var j = 0; j < words.length; j++) {
       if (wordToFind === words[j]) {
         return { status: true, type: synonyms[i].type, word: words[0] }; // return first word
@@ -25,8 +26,9 @@ const findWord = (wordToFind, synonyms) => {
 };
 
 const Parser = ({ prompt }) => {
-  const { tell, commandHistory, performAction, syntax, synonyms, stopWords } =
+  const { tell, commandHistory, performAction, synonyms, stopWords } =
     useGlobalContext();
+
   const processCommand = () => {
     const command = commandHistory[commandHistory.length - 1];
     tell(prompt + command);
@@ -85,7 +87,12 @@ const Parser = ({ prompt }) => {
 
     if (success) {
       if (cleanedCommands.length === 1 && directions.length === 1) {
-        return { ...tempPayload, success: true, pAction: directions[0] };
+        return {
+          ...tempPayload,
+          success: true,
+          pAction: "WALK",
+          pObject: directions[0],
+        };
       }
       if (directions.length > 1) {
         return {
@@ -100,19 +107,25 @@ const Parser = ({ prompt }) => {
         };
       }
 
-      if (verbs.length === 1) {
-        const tempcommand = syntax.filter((syntax) => syntax.verb === verbs[0]);
-
-        if (tempcommand.length > 0) {
-          return {
-            ...tempPayload,
-            success: true,
-            pAction: tempcommand[0].action,
-          };
-        } else {
-          return { ...tempPayload, message: "No action was taken." };
-        }
+      if (verbs.length === 1 && cleanedCommands.length === 1) {
+        return { ...tempPayload, success: true, pAction: verbs[0] };
       }
+
+      // if (verbs.length === 1){
+      //   const tempcommand = gameAssets.syntax.filter(
+      //     (syntax) => syntax.phrase === verbs[0]
+      //   );
+
+      //   if (tempcommand.length > 0) {
+      //     return {
+      //       ...tempPayload,
+      //       success: true,
+      //       pAction: tempcommand[0].fnc,
+      //     };
+      //   } else {
+      //     return { ...tempPayload, message: "No action was taken." };
+      //   }
+      // }
     }
 
     return { ...tempPayload, message: failureMessage };

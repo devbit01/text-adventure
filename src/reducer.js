@@ -9,7 +9,16 @@ export const reducer = (state, action) => {
     return { ...state, commands: state.commands.concat(action.payload) };
   }
   if (action.type === "V-CLEAR-SCREEN") {
+    console.log("clearing screen");
     return { ...state, outputHistory: [] };
+  }
+
+  if (action.type === "SETHERE") {
+    return { ...state, here: action.payload };
+  }
+  if (action.type === "UPDATE_STATE") {
+    console.log("updating state with tempstate:", action.payload);
+    return action.payload;
   }
 
   return state;
