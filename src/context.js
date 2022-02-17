@@ -1,7 +1,7 @@
 import React, { useState, useContext, useReducer, useEffect } from "react";
 import { reducer } from "./reducer";
 import { synonyms, stopWords, synonmys_map } from "./data";
-import { zorkGameData, rooms } from "./games/zorkGameData";
+import { rooms } from "./games/zorkGameData";
 
 const AppContext = React.createContext();
 
@@ -14,8 +14,6 @@ const defaultState = {
 };
 
 const AppProvider = ({ children }) => {
-  const [state, dispatch] = useReducer(reducer, defaultState);
-  const [gameState, setGameState] = useState(defaultState);
   const [synonymLookup, setSynonymLookup] = useState(new Map());
   const [commandHistory, setCommandHistory] = useState([]);
   const [outputHistory, setOutputHistory] = useState([]);
